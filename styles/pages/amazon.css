@@ -4,6 +4,8 @@
 
 .products-grid {
   display: grid;
+  /* width: 100%; */
+  gap: 1.5rem;
 
   /* - In CSS Grid, 1fr means a column will take up the
        remaining space in the grid.
@@ -66,10 +68,8 @@
 }
 
 .product-container {
-  padding-top: 40px;
-  padding-bottom: 25px;
-  padding-left: 25px;
-  padding-right: 25px;
+  /* width: 100%; */
+  padding: 40px 25px 25px 25px;
 
   border-right: 1px solid rgb(231, 231, 231);
   border-bottom: 1px solid rgb(231, 231, 231);
