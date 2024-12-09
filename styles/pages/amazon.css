@@ -68,8 +68,8 @@
 }
 
 .product-container {
-  /* width: 100%; */
-  padding: 40px 25px 25px 25px;
+  /* width: 20rem; */
+  padding: 40px 20px 20px 25px;
 
   border-right: 1px solid rgb(231, 231, 231);
   border-bottom: 1px solid rgb(231, 231, 231);
