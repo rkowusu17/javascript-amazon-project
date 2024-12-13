@@ -209,3 +209,23 @@
   margin-top: 11px;
   margin-bottom: 15px;
 }
+.save-quantity-input {
+  width: 30px;
+  padding: 2px 5px;
+  font-size: 12px;
+  text-align: center;
+}
+
+.save-quantity-link,
+.save-quantity-input {
+  display: none;
+}
+
+.is-editing-quantity .save-quantity-input,
+.is-editing-quantity .save-quantity-link {
+  display: initial;
+}
+.is-editing-quantity .update-quantity-link,
+.is-editing-quantity .quantity-label {
+  display: none;
+}
