@@ -64,10 +64,12 @@ products.forEach((product) => {
 document.querySelector(".products-grid").innerHTML = productsHTML;
 
 function updateCartQuantity() {
-  calculateCartQuantity();
+  const cartQuantity = calculateCartQuantity();
+  document.querySelector(".cart-quantity").innerHTML = cartQuantity;
 }
 document.addEventListener("DOMContentLoaded", updateCartQuantity);
 
+//Add to cart event
 document.querySelectorAll(".add-to-cart-button").forEach((button) => {
   button.addEventListener("click", () => {
     const productId = button.dataset.productId;

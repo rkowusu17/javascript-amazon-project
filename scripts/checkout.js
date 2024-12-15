@@ -1,16 +1,13 @@
 // Importing the needed
-import {
-  cart,
-  removeFromCart,
-  saveToStorage,
-  calculateCartQuantity,
-  updateQuantity,
-} from "../data/cart.js";
+import { cart, removeFromCart, calculateCartQuantity } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
+
 let cartSummaryHTML = " ";
+
 cart.forEach((CartItem) => {
   const productId = CartItem.productId;
+  const productQuantity = CartItem.quantity;
 
   let matchingProduct;
 
@@ -48,7 +45,7 @@ cart.forEach((CartItem) => {
                 <span class="update-quantity-link update-quantity-link-${
                   matchingProduct.id
                 } link-primary"
-                 data-product-id="${matchingProduct.id}">
+                 data-product-id="${matchingProduct.id}" >
                 Update
                 </span> 
                 <input class="save-quantity-input save-quantity-input-${
@@ -57,7 +54,7 @@ cart.forEach((CartItem) => {
 
                 <span class="save-quantity-link link-primary" data-product-id="${
                   matchingProduct.id
-                }">Save</span> 
+                }" data-product-quantity = "${productQuantity}">Save</span> 
                 
 
                 <span class="delete-quantity-link js-delete-link link-primary"  data-product-id="${
@@ -129,14 +126,15 @@ document.querySelectorAll(".js-delete-link").forEach((link) => {
 });
 
 // Making the cartnumber [Header] interactive
-document.addEventListener("DOMContentLoaded", checkoutNumber);
-function checkoutNumber() {
-  let cartQuantity = 0;
-  cart.forEach((CartItem) => {
-    cartQuantity += CartItem.quantity;
-  });
-  // updateQuantity(productId, 0);
+document.addEventListener("DOMContentLoaded", () => {
+  let message = checkoutNumber(cartQuantity);
+  document.querySelector(".js-checkout-number").innerHTML = message;
+});
 
+//Setting the value of the header in cart quatity to number of items added
+let cartQuantity = calculateCartQuantity();
+
+function checkoutNumber(cartQuantity) {
   let message =
     cartQuantity == 0
       ? `Checkout (<a class="return-to-home-link" href="amazon.html"> 0 item </a>)`
@@ -145,10 +143,12 @@ function checkoutNumber() {
       : (cartQuantity = 1
           ? `Checkout (<a class="return-to-home-link" href="amazon.html">${cartQuantity} item </a>)`
           : " ");
+  return message;
 
-  document.querySelector(".js-checkout-number").innerHTML = message;
+  // console.log(cart);
 }
 
+//Update link
 document.querySelectorAll(`.update-quantity-link`).forEach((link) => {
   link.addEventListener("click", () => {
     const productId = link.dataset.productId;
@@ -158,9 +158,11 @@ document.querySelectorAll(`.update-quantity-link`).forEach((link) => {
   });
 });
 
+//Save link
 document.querySelectorAll(".save-quantity-link").forEach((link) => {
   link.addEventListener("click", () => {
     const productId = link.dataset.productId;
+    let Quantity = link.dataset.productQuantity;
     document
       .querySelector(`.cart-item-container-${productId}`)
       .classList.remove("is-editing-quantity");
@@ -171,7 +173,21 @@ document.querySelectorAll(".save-quantity-link").forEach((link) => {
     document.querySelector(`.quantity-label-${productId}`).innerHTML =
       newQuantity;
 
-    saveToStorage();
+    console.log("Number before subraction", Quantity);
+    Quantity = Number(newQuantity - Quantity);
+    console.log("Number after subtraction", Quantity);
+
+    let cartQuantity = calculateCartQuantity();
+    console.log("Number after calc function", cartQuantity);
+    cartQuantity = Number(Quantity + cartQuantity);
+    console.log("Number after update has been added", cartQuantity);
+
+    let message = checkoutNumber(cartQuantity);
+    console.log(message);
+    document.querySelector(".js-checkout-number").innerHTML = message;
+
+    Quantity = newQuantity;
+    console.log(Quantity);
     // console.log(document.querySelector(`.cart-item-container-${productId}`));
   });
 });
