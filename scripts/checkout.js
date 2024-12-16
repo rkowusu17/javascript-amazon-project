@@ -1,5 +1,10 @@
 // Importing the needed
-import { cart, removeFromCart, calculateCartQuantity } from "../data/cart.js";
+import {
+  cart,
+  removeFromCart,
+  calculateCartQuantity,
+  saveToStorage,
+} from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
 
@@ -124,6 +129,8 @@ document.querySelectorAll(".js-delete-link").forEach((link) => {
     container.remove();
     cartQuantity -= numberOfItems;
 
+    console.log(cartQuantity);
+
     let message = checkoutNumber(cartQuantity);
     console.log(message);
     document.querySelector(".js-checkout-number").innerHTML = message;
@@ -167,9 +174,19 @@ document.querySelectorAll(`.update-quantity-link`).forEach((link) => {
 
 //Save link
 document.querySelectorAll(".save-quantity-link").forEach((link) => {
-  link.addEventListener("click", () => {
-    const productId = link.dataset.productId;
-    let Quantity = link.dataset.productQuantity;
+  const productId = link.dataset.productId;
+  let Quantity = link.dataset.productQuantity;
+
+  link.addEventListener("click", saveNewCart);
+  document
+    .querySelector(`.save-quantity-input-${productId}`)
+    .addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        saveNewCart();
+      }
+    });
+
+  function saveNewCart() {
     document
       .querySelector(`.cart-item-container-${productId}`)
       .classList.remove("is-editing-quantity");
@@ -195,6 +212,7 @@ document.querySelectorAll(".save-quantity-link").forEach((link) => {
 
     Quantity = newQuantity;
     console.log(Quantity);
+    saveToStorage();
     // console.log(document.querySelector(`.cart-item-container-${productId}`));
-  });
+  }
 });
