@@ -59,7 +59,7 @@ cart.forEach((CartItem) => {
 
                 <span class="delete-quantity-link js-delete-link link-primary"  data-product-id="${
                   matchingProduct.id
-                }">
+                }" data-product-quantity = "${productQuantity}">
                 Delete
                 </span>
             </div>
@@ -110,29 +110,36 @@ cart.forEach((CartItem) => {
 
 document.querySelector(".order-summary").innerHTML = cartSummaryHTML;
 
-//Removing the product with delete
+//Removing the product with delete link
 document.querySelectorAll(".js-delete-link").forEach((link) => {
   link.addEventListener("click", () => {
     const productId = link.dataset.productId;
+    const numberOfItems = link.dataset.productQuantity;
+
     removeFromCart(productId);
     const container = document.querySelector(
       `.cart-item-container-${productId}`
     );
+
     container.remove();
-    checkoutNumber();
+    cartQuantity -= numberOfItems;
+
+    let message = checkoutNumber(cartQuantity);
+    console.log(message);
+    document.querySelector(".js-checkout-number").innerHTML = message;
   });
 
-  link.addEventListener("click", checkoutNumber);
+  // link.addEventListener("click", checkoutNumber);
 });
 
 // Making the cartnumber [Header] interactive
+let cartQuantity = calculateCartQuantity();
 document.addEventListener("DOMContentLoaded", () => {
   let message = checkoutNumber(cartQuantity);
   document.querySelector(".js-checkout-number").innerHTML = message;
 });
 
 //Setting the value of the header in cart quatity to number of items added
-let cartQuantity = calculateCartQuantity();
 
 function checkoutNumber(cartQuantity) {
   let message =
