@@ -7,12 +7,13 @@ import {
 } from "../data/cart.js";
 import { products } from "../data/products.js";
 import { formatCurrency } from "./utils/money.js";
+let cartQuantity = calculateCartQuantity();
 
 let cartSummaryHTML = " ";
 
 cart.forEach((CartItem) => {
-  const productId = CartItem.productId;
-  const productQuantity = CartItem.quantity;
+  let productId = CartItem.productId;
+  let productQuantity = CartItem.quantity;
 
   let matchingProduct;
 
@@ -41,8 +42,8 @@ cart.forEach((CartItem) => {
             </div>
             <div class="product-price">$${formatCurrency(
               matchingProduct.priceCents
-            )}
-</div>
+            )} 
+  </div>
             <div class="product-quantity">
                 <span> Quantity: <span class="quantity-label quantity-label-${
                   matchingProduct.id
@@ -112,7 +113,7 @@ cart.forEach((CartItem) => {
         </div>
         </div>`;
 });
-
+//DOm for order summary
 document.querySelector(".order-summary").innerHTML = cartSummaryHTML;
 
 //Removing the product with delete link
@@ -126,28 +127,16 @@ document.querySelectorAll(".js-delete-link").forEach((link) => {
       `.cart-item-container-${productId}`
     );
 
+    // Updating(subtracting the deleted products)
     container.remove();
     cartQuantity -= numberOfItems;
 
-    console.log(cartQuantity);
-
     let message = checkoutNumber(cartQuantity);
-    console.log(message);
     document.querySelector(".js-checkout-number").innerHTML = message;
   });
 
   // link.addEventListener("click", checkoutNumber);
 });
-
-// Making the cartnumber [Header] interactive
-let cartQuantity = calculateCartQuantity();
-document.addEventListener("DOMContentLoaded", () => {
-  let message = checkoutNumber(cartQuantity);
-  document.querySelector(".js-checkout-number").innerHTML = message;
-});
-
-//Setting the value of the header in cart quatity to number of items added
-
 function checkoutNumber(cartQuantity) {
   let message =
     cartQuantity == 0
@@ -162,6 +151,13 @@ function checkoutNumber(cartQuantity) {
   // console.log(cart);
 }
 
+//Updating header
+document.addEventListener("DOMContentLoaded", updateHeader);
+
+function updateHeader() {
+  let message = checkoutNumber(cartQuantity);
+  document.querySelector(".js-checkout-number").innerHTML = message;
+}
 //Update link
 document.querySelectorAll(`.update-quantity-link`).forEach((link) => {
   link.addEventListener("click", () => {
@@ -190,29 +186,26 @@ document.querySelectorAll(".save-quantity-link").forEach((link) => {
     document
       .querySelector(`.cart-item-container-${productId}`)
       .classList.remove("is-editing-quantity");
-    const newQuantity = Number(
+    let newQuantity = Number(
       document.querySelector(`.save-quantity-input-${productId}`).value
     );
 
+    if (isNaN(newQuantity) || newQuantity < 0) {
+      alert("Please enter a valid quantity.");
+      return;
+    }
     document.querySelector(`.quantity-label-${productId}`).innerHTML =
       newQuantity;
 
-    console.log("Number before subraction", Quantity);
-    Quantity = Number(newQuantity - Quantity);
-    console.log("Number after subtraction", Quantity);
+    const cartItem = cart.find((item) => item.productId === productId);
+    const oldQuantity = cartItem.quantity;
+    cartItem.quantity = newQuantity;
 
-    let cartQuantity = calculateCartQuantity();
-    console.log("Number after calc function", cartQuantity);
-    cartQuantity = Number(Quantity + cartQuantity);
-    console.log("Number after update has been added", cartQuantity);
-
-    let message = checkoutNumber(cartQuantity);
-    console.log(message);
-    document.querySelector(".js-checkout-number").innerHTML = message;
-
-    Quantity = newQuantity;
-    console.log(Quantity);
+    // cartQuantity = newQuantity - oldQuantity;
     saveToStorage();
-    // console.log(document.querySelector(`.cart-item-container-${productId}`));
+    cartQuantity = calculateCartQuantity();
+    updateHeader();
   }
+
+  // Making the cartnumber [Header] interactive
 });
